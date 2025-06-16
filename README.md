@@ -28,6 +28,7 @@ Configureable with [ModMenu](https://modrinth.com/mod/modmenu)
 
 ## Special Thanks
 - vin35's [autoattack](https://github.com/vin350/AutoAttack) for code inspiration
+- Luky005's Simple_Auto_Attack code. (Forked)
 
 ## Details
 Prevents block breaking when holding items with the SWORD tag or items that have trident or mace in their name, so it should support most modded weapons.
