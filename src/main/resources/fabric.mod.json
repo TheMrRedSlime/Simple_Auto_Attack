@@ -4,7 +4,7 @@
   "version": "${version}",
   "name": "Simple Auto Attack",
   "description": "Makes holding the attack button attack entities automatically",
-  "authors": ["Luky005"],
+  "authors": ["Luky005", "TheMrRedSlime"],
   "contact": {
     "homepage": "https://modrinth.com/mod/simple-auto-attack",
     "sources": "https://github.com/Luky05005/Simple_Auto_Attack",
@@ -28,7 +28,7 @@
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
     "minecraft": "${minecraft_version}",
-    "cloth-config": "*"
+    "cloth-config2": "*"
   },
   "recommends": {
     "modmenu": "*"

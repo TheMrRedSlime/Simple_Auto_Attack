@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "org.simpleautoattack.SimpleAutoAttack.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_8",
   "client": [
     "AutoAttackClientMixin"
   ],
