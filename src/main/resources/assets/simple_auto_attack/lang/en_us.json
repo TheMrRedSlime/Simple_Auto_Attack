@@ -10,5 +10,9 @@
   
   "text.autoconfig.simple_auto_attack.option.preventBlockBreaking": "Prevent Block Breaking",
   "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[0]": "Prevents breaking blocks when holding weapons",
-  "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[1]": "Works with swords, tridents, and maces"
+  "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[1]": "Works with swords and tridents",
+
+  "text.autoconfig.simple_auto_attack.option.bypass": "Bypass",
+  "text.autoconfig.simple_auto_attack.option.bypass.@Tooltip[0]": "Try and make the attacks look human",
+  "text.autoconfig.simple_auto_attack.option.bypass.@Tooltip[1]": "using randomization."
 }

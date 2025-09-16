@@ -43,7 +43,7 @@ public class AutoAttack implements ClientModInitializer {
 
     private void AutoMeleeTick(MinecraftClient mc) {
         if (!mc.options.keyAttack.isPressed() || mc.player == null || mc.world == null || mc.interactionManager == null
-                || !(mc.player.getAttackCooldownProgress(0) >= 1)) {
+                || !(mc.player.getAttackCooldownProgress(0) >= 1) || (Math.random() < 0.2 && config.bypass)) {
             return;
         }
 
@@ -58,7 +58,7 @@ public class AutoAttack implements ClientModInitializer {
             BlockState blockState = mc.world.getBlockState(blockPos);
 
             if (blockState.getCollisionShape(mc.world, blockPos).isEmpty() || blockState.getHardness(mc.world, blockPos) == 0.0F) {
-                float reach = (float) (mc.player.isCreative() ? 4.5 : 3.0);
+                float reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + Math.random() * 0.3));
                 Vec3d camera = mc.player.getCameraPosVec(1.0F);
                 Vec3d rotation = mc.player.getRotationVec(1.0F);
                 Vec3d end = camera.add(rotation.x * reach, rotation.y * reach, rotation.z * reach);
@@ -67,6 +67,9 @@ public class AutoAttack implements ClientModInitializer {
                 if (result != null && result.getEntity().isAlive()) {
                     mc.interactionManager.attackEntity(mc.player, result.getEntity());
                     mc.player.swingHand(Hand.MAIN_HAND);
+                    if (config.bypass){
+                        reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + Math.random() * 0.3));
+                    }
                 }
             }
         } else if (mc.crosshairTarget.getType() == HitResult.Type.ENTITY) {
