@@ -1,21 +1,19 @@
 package org.simpleautoattack.SimpleAutoAttack;
 
+import org.lwjgl.glfw.GLFW;
+import org.simpleautoattack.SimpleAutoAttack.config.AutoAttackConfig;
+
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-
-import org.lwjgl.glfw.GLFW;
-import org.simpleautoattack.SimpleAutoAttack.config.AutoAttackConfig;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -60,68 +58,82 @@ public class AutoAttack implements ClientModInitializer {
             AFKMode = !AFKMode;
         }
 
-        if ((!mc.options.keyAttack.isPressed() && !AFKMode) || mc.player == null || mc.world == null || mc.interactionManager == null || !(mc.player.getAttackCooldownProgress(0) >= 1)) return;
+        if ((!AFKMode && !mc.options.keyAttack.isPressed()) ||
+            mc.player == null ||
+            mc.world == null ||
+            mc.interactionManager == null ||
+            !(mc.player.getAttackCooldownProgress(0) >= 1)) return;
 
         if (Math.random() < 0.2 && config.limit) return;
 
-        if (mc.crosshairTarget.getType() == HitResult.Type.MISS) {
+        HitResult target = mc.crosshairTarget;
+
+        if (target.getType() == HitResult.Type.MISS) {
             if (config.alwaysAttack) {
                 mc.player.resetLastAttackedTicks();
                 mc.player.swingHand(Hand.MAIN_HAND);
             }
-        } else if (mc.crosshairTarget.getType() == HitResult.Type.BLOCK) {
-            BlockHitResult blockHit = (BlockHitResult) mc.crosshairTarget;
+        } else if (target.getType() == HitResult.Type.BLOCK) {
+            BlockHitResult blockHit = (BlockHitResult) target;
             BlockPos blockPos = blockHit.getBlockPos();
             BlockState blockState = mc.world.getBlockState(blockPos);
 
             if (blockState.getCollisionShape(mc.world, blockPos).isEmpty() || blockState.getHardness(mc.world, blockPos) == 0.0F) {
-                float reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + (Math.random() * 0.3)));
-                Vec3d camera = mc.player.getCameraPosVec(1.0F);
-                Vec3d rotation = mc.player.getRotationVec(1.0F);
-                Vec3d end = camera.add(rotation.x * reach, rotation.y * reach, rotation.z * reach);
-                EntityHitResult result = ProjectileUtil.raycast(mc.player, camera, end, new Box(camera, end),
-                        e -> !e.isSpectator() && e.isAttackable(), reach * reach);
-                if (result != null && result.getEntity().isAlive()) {
-                    Entity entity = result.getEntity();
-                    Vec3d hitPos = result.getPos();
-                    Box entityBox = entity.getBoundingBox();
-                    
-                    double relX = (hitPos.x - entityBox.minX) / entityBox.getXLength();
-                    double relZ = (hitPos.z - entityBox.minZ) / entityBox.getZLength();
-                    
-                    double margin = 0.15;
-                    if (relX >= margin && relX <= (1.0 - margin) && 
-                        relZ >= margin && relZ <= (1.0 - margin)) {
-                        
-                        mc.interactionManager.attackEntity(mc.player, result.getEntity());
-                        mc.player.swingHand(Hand.MAIN_HAND);
-                        
-                        if (config.limit) {
-                            reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + (Math.random() * 0.3)));
-                        }
-                    }
-                }
+                attackRaycastEntity(mc, blockHit.getBlockPos());
             }
-        } else if (mc.crosshairTarget.getType() == HitResult.Type.ENTITY) {
-            Entity entity = ((EntityHitResult) mc.crosshairTarget).getEntity();
-            EntityHitResult entityHit = (EntityHitResult) mc.crosshairTarget;
-            
-            if (entity.isAlive() && entity.isAttackable()) {
-                Vec3d hitPos = entityHit.getPos();
-                Box entityBox = entity.getBoundingBox();
-                
-                double relX = (hitPos.x - entityBox.minX) / entityBox.getXLength();
-                double relZ = (hitPos.z - entityBox.minZ) / entityBox.getZLength();
 
-                double margin = 0.15;
-                if (((relX >= margin && relX <= (1.0 - margin) && relZ >= margin && relZ <= (1.0 - margin))) && config.limit) {
-                    mc.interactionManager.attackEntity(mc.player, entity);
-                    mc.player.swingHand(Hand.MAIN_HAND);
-                } else if (!config.limit){
-                    mc.interactionManager.attackEntity(mc.player, entity);
-                    mc.player.swingHand(Hand.MAIN_HAND);
-                }
-            }
+        } else if (target.getType() == HitResult.Type.ENTITY) {
+            EntityHitResult entityHit = (EntityHitResult) target;
+            Entity entity = entityHit.getEntity();
+            attackEntity(mc, entity);
         }
     }
+
+    // helper: attacks entities from a raycast (e.g., block->entity)
+    private void attackRaycastEntity(MinecraftClient mc, BlockPos pos) {
+        float reach = (float) (mc.player.isCreative() ? 4.5 : (config.limit ? 2.7 : 3.0));
+        Vec3d camera = mc.player.getCameraPosVec(1.0F);
+        Vec3d rotation = mc.player.getRotationVec(1.0F);
+        Vec3d end = camera.add(rotation.x * reach, rotation.y * reach, rotation.z * reach);
+
+        EntityHitResult result = ProjectileUtil.raycast(mc.player, camera, end, new Box(camera, end),
+                e -> !e.isSpectator() && e.isAttackable(), reach * reach);
+
+        if (result != null && result.getEntity().isAlive()) {
+            attackEntity(mc, result.getEntity());
+        }
+    }
+
+    // helper: attacks a given entity with perimeter-safe margin
+    private void attackEntity(MinecraftClient mc, Entity entity) {
+        if (!entity.isAlive() || !entity.isAttackable()) return;
+
+        Box box = entity.getBoundingBox();
+        double margin = 0.05; // 5% edge margin
+        double minX = margin * box.getXLength();
+        double minZ = margin * box.getZLength();
+
+        // Use mid-height of the entity for horizontal hit
+        double yLevel = (box.minY + box.maxY) / 2.0;
+
+        // Camera position
+        Vec3d camera = mc.player.getCameraPosVec(1.0F);
+        Vec3d look = mc.player.getRotationVec(1.0F);
+
+        // Project ray to entity mid-Y plane
+        double t = (yLevel - camera.y) / look.y;
+        if (t <= 0) return; // behind camera
+
+        Vec3d hitPos = camera.add(look.multiply(t));
+
+        // Check if within X/Z perimeter minus margin
+        boolean safeX = hitPos.x >= box.minX + minX && hitPos.x <= box.maxX - minX;
+        boolean safeZ = hitPos.z >= box.minZ + minZ && hitPos.z <= box.maxZ - minZ;
+
+        if ((safeX && safeZ) || !config.limit) {
+            mc.interactionManager.attackEntity(mc.player, entity);
+            mc.player.swingHand(Hand.MAIN_HAND);
+        }
+    }
+
 }
