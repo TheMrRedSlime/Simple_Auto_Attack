@@ -65,18 +65,42 @@ public class AutoAttack implements ClientModInitializer {
                 EntityHitResult result = ProjectileUtil.raycast(mc.player, camera, end, new Box(camera, end),
                         e -> !e.isSpectator() && e.isAttackable(), reach * reach);
                 if (result != null && result.getEntity().isAlive()) {
-                    mc.interactionManager.attackEntity(mc.player, result.getEntity());
-                    mc.player.swingHand(Hand.MAIN_HAND);
-                    if (config.bypass){
-                        reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + Math.random() * 0.3));
+                    Entity entity = result.getEntity();
+                    Vec3d hitPos = result.getPos();
+                    Box entityBox = entity.getBoundingBox();
+                    
+                    double relX = (hitPos.x - entityBox.minX) / entityBox.getXLength();
+                    double relZ = (hitPos.z - entityBox.minZ) / entityBox.getZLength();
+                    
+                    double margin = 0.1;
+                    if (relX >= margin && relX <= (1.0 - margin) && 
+                        relZ >= margin && relZ <= (1.0 - margin)) {
+                        
+                        mc.interactionManager.attackEntity(mc.player, result.getEntity());
+                        mc.player.swingHand(Hand.MAIN_HAND);
+                        
+                        if (config.bypass) {
+                            reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + Math.random() * 0.3));
+                        }
                     }
                 }
             }
         } else if (mc.crosshairTarget.getType() == HitResult.Type.ENTITY) {
             Entity entity = ((EntityHitResult) mc.crosshairTarget).getEntity();
+            EntityHitResult entityHit = (EntityHitResult) mc.crosshairTarget;
+            
             if (entity.isAlive() && entity.isAttackable()) {
-                mc.interactionManager.attackEntity(mc.player, entity);
-                mc.player.swingHand(Hand.MAIN_HAND);
+                Vec3d hitPos = entityHit.getPos();
+                Box entityBox = entity.getBoundingBox();
+                
+                double relX = (hitPos.x - entityBox.minX) / entityBox.getXLength();
+                double relZ = (hitPos.z - entityBox.minZ) / entityBox.getZLength();
+
+                double margin = 0.1;
+                if (((relX >= margin && relX <= (1.0 - margin) && relZ >= margin && relZ <= (1.0 - margin))) || !config.bypass) {
+                    mc.interactionManager.attackEntity(mc.player, entity);
+                    mc.player.swingHand(Hand.MAIN_HAND);
+                }
             }
         }
     }
