@@ -4,10 +4,15 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+
+import org.lwjgl.glfw.GLFW;
 import org.simpleautoattack.SimpleAutoAttack.config.AutoAttackConfig;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 
@@ -21,6 +26,15 @@ import net.minecraft.util.math.Vec3d;
 
 public class AutoAttack implements ClientModInitializer {
     private static AutoAttackConfig config;
+    public boolean AFKMode = false;
+    final KeyBinding AFKKeybind = KeyBindingHelper.registerKeyBinding(
+            new KeyBinding(
+                "org.simpleautoattack.AFK_Key",
+                InputUtil.Type.KEYSYM, 
+                GLFW.GLFW_KEY_K,             
+                "org.simpleautoattack.AttackKeys"
+            )
+        );
 
     @Override
     public void onInitializeClient() {
@@ -28,7 +42,6 @@ public class AutoAttack implements ClientModInitializer {
         AutoConfig.register(AutoAttackConfig.class, GsonConfigSerializer::new);
         config = AutoConfig.getConfigHolder(AutoAttackConfig.class).getConfig();
 
-        
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (config.enabled) {  // Only run if enabled in config
                 AutoMeleeTick(client);
@@ -42,8 +55,13 @@ public class AutoAttack implements ClientModInitializer {
     }
 
     private void AutoMeleeTick(MinecraftClient mc) {
-        if (!mc.options.keyAttack.isPressed() || mc.player == null || mc.world == null || mc.interactionManager == null
-                || !(mc.player.getAttackCooldownProgress(0) >= 1) || (Math.random() < 0.2 && config.bypass)) {
+
+        if(AFKKeybind.isPressed() && mc.player != null){
+            AFKMode = !AFKMode;
+        }
+
+        if ((!mc.options.keyAttack.isPressed() && !AFKMode) || mc.player == null || mc.world == null || mc.interactionManager == null
+                || !(mc.player.getAttackCooldownProgress(0) >= 1) || (Math.random() < 0.2 && config.limit)) {
             return;
         }
 
@@ -79,7 +97,7 @@ public class AutoAttack implements ClientModInitializer {
                         mc.interactionManager.attackEntity(mc.player, result.getEntity());
                         mc.player.swingHand(Hand.MAIN_HAND);
                         
-                        if (config.bypass) {
+                        if (config.limit) {
                             reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + Math.random() * 0.3));
                         }
                     }
@@ -97,7 +115,7 @@ public class AutoAttack implements ClientModInitializer {
                 double relZ = (hitPos.z - entityBox.minZ) / entityBox.getZLength();
 
                 double margin = 0.1;
-                if (((relX >= margin && relX <= (1.0 - margin) && relZ >= margin && relZ <= (1.0 - margin))) || !config.bypass) {
+                if (((relX >= margin && relX <= (1.0 - margin) && relZ >= margin && relZ <= (1.0 - margin))) || !config.limit) {
                     mc.interactionManager.attackEntity(mc.player, entity);
                     mc.player.swingHand(Hand.MAIN_HAND);
                 }

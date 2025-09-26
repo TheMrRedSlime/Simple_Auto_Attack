@@ -6,7 +6,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tag.ItemTags;
 
 //import net.minecraft.registry.tag.ItemTags;
 import org.spongepowered.asm.mixin.Mixin;

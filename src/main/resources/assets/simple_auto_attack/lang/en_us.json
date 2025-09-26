@@ -12,7 +12,10 @@
   "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[0]": "Prevents breaking blocks when holding weapons",
   "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[1]": "Works with swords and tridents",
 
-  "text.autoconfig.simple_auto_attack.option.bypass": "Bypass",
-  "text.autoconfig.simple_auto_attack.option.bypass.@Tooltip[0]": "Try and make the attacks look human",
-  "text.autoconfig.simple_auto_attack.option.bypass.@Tooltip[1]": "using randomization."
+  "text.autoconfig.simple_auto_attack.option.limit": "Limit",
+  "text.autoconfig.simple_auto_attack.option.limit.@Tooltip[0]": "Try and limit the attacks",
+  "text.autoconfig.simple_auto_attack.option.limit.@Tooltip[1]": "using randomization.",
+
+  "org.simpleautoattack.AFK_Key": "AFK Keybind",
+  "org.simpleautoattack.AttackKeys": "AutoAttack"
 }
