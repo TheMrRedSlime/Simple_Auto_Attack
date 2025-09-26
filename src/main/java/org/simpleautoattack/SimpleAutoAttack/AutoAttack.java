@@ -56,14 +56,13 @@ public class AutoAttack implements ClientModInitializer {
 
     private void AutoMeleeTick(MinecraftClient mc) {
 
-        if(AFKKeybind.isPressed() && mc.player != null){
+        if(AFKKeybind.wasPressed() && mc.player != null){
             AFKMode = !AFKMode;
         }
 
-        if ((!mc.options.keyAttack.isPressed() && !AFKMode) || mc.player == null || mc.world == null || mc.interactionManager == null
-                || !(mc.player.getAttackCooldownProgress(0) >= 1) || (Math.random() < 0.2 && config.limit)) {
-            return;
-        }
+        if ((!mc.options.keyAttack.isPressed() && !AFKMode) || mc.player == null || mc.world == null || mc.interactionManager == null || !(mc.player.getAttackCooldownProgress(0) >= 1)) return;
+
+        if (Math.random() < 0.2 && config.limit) return;
 
         if (mc.crosshairTarget.getType() == HitResult.Type.MISS) {
             if (config.alwaysAttack) {
@@ -76,7 +75,7 @@ public class AutoAttack implements ClientModInitializer {
             BlockState blockState = mc.world.getBlockState(blockPos);
 
             if (blockState.getCollisionShape(mc.world, blockPos).isEmpty() || blockState.getHardness(mc.world, blockPos) == 0.0F) {
-                float reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + Math.random() * 0.3));
+                float reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + (Math.random() * 0.3)));
                 Vec3d camera = mc.player.getCameraPosVec(1.0F);
                 Vec3d rotation = mc.player.getRotationVec(1.0F);
                 Vec3d end = camera.add(rotation.x * reach, rotation.y * reach, rotation.z * reach);
@@ -90,7 +89,7 @@ public class AutoAttack implements ClientModInitializer {
                     double relX = (hitPos.x - entityBox.minX) / entityBox.getXLength();
                     double relZ = (hitPos.z - entityBox.minZ) / entityBox.getZLength();
                     
-                    double margin = 0.1;
+                    double margin = 0.15;
                     if (relX >= margin && relX <= (1.0 - margin) && 
                         relZ >= margin && relZ <= (1.0 - margin)) {
                         
@@ -98,7 +97,7 @@ public class AutoAttack implements ClientModInitializer {
                         mc.player.swingHand(Hand.MAIN_HAND);
                         
                         if (config.limit) {
-                            reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + Math.random() * 0.3));
+                            reach = (float) (mc.player.isCreative() ? 4.5 : (2.7 + (Math.random() * 0.3)));
                         }
                     }
                 }
@@ -114,8 +113,11 @@ public class AutoAttack implements ClientModInitializer {
                 double relX = (hitPos.x - entityBox.minX) / entityBox.getXLength();
                 double relZ = (hitPos.z - entityBox.minZ) / entityBox.getZLength();
 
-                double margin = 0.1;
-                if (((relX >= margin && relX <= (1.0 - margin) && relZ >= margin && relZ <= (1.0 - margin))) || !config.limit) {
+                double margin = 0.15;
+                if (((relX >= margin && relX <= (1.0 - margin) && relZ >= margin && relZ <= (1.0 - margin))) && config.limit) {
+                    mc.interactionManager.attackEntity(mc.player, entity);
+                    mc.player.swingHand(Hand.MAIN_HAND);
+                } else if (!config.limit){
                     mc.interactionManager.attackEntity(mc.player, entity);
                     mc.player.swingHand(Hand.MAIN_HAND);
                 }
