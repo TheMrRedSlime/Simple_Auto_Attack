@@ -21,6 +21,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import java.util.Random;
 
 public class AutoAttack implements ClientModInitializer {
     private static AutoAttackConfig config;
@@ -64,7 +65,7 @@ public class AutoAttack implements ClientModInitializer {
             mc.interactionManager == null ||
             !(mc.player.getAttackCooldownProgress(0) >= 1)) return;
 
-        if (Math.random() < 0.2 && config.limit) return;
+        if (Math.random() < 0.667 && config.limit) return;
 
         HitResult target = mc.crosshairTarget;
 
@@ -89,7 +90,6 @@ public class AutoAttack implements ClientModInitializer {
         }
     }
 
-    // helper: attacks entities from a raycast (e.g., block->entity)
     private void attackRaycastEntity(MinecraftClient mc, BlockPos pos) {
         float reach = (float) (mc.player.isCreative() ? 4.5 : (config.limit ? 2.7 : 3.0));
         Vec3d camera = mc.player.getCameraPosVec(1.0F);
@@ -104,36 +104,15 @@ public class AutoAttack implements ClientModInitializer {
         }
     }
 
-    // helper: attacks a given entity with perimeter-safe margin
     private void attackEntity(MinecraftClient mc, Entity entity) {
-        if (!entity.isAlive() || !entity.isAttackable()) return;
-
-        Box box = entity.getBoundingBox();
-        double margin = 0.05; // 5% edge margin
-        double minX = margin * box.getXLength();
-        double minZ = margin * box.getZLength();
-
-        // Use mid-height of the entity for horizontal hit
-        double yLevel = (box.minY + box.maxY) / 2.0;
-
-        // Camera position
-        Vec3d camera = mc.player.getCameraPosVec(1.0F);
-        Vec3d look = mc.player.getRotationVec(1.0F);
-
-        // Project ray to entity mid-Y plane
-        double t = (yLevel - camera.y) / look.y;
-        if (t <= 0) return; // behind camera
-
-        Vec3d hitPos = camera.add(look.multiply(t));
-
-        // Check if within X/Z perimeter minus margin
-        boolean safeX = hitPos.x >= box.minX + minX && hitPos.x <= box.maxX - minX;
-        boolean safeZ = hitPos.z >= box.minZ + minZ && hitPos.z <= box.maxZ - minZ;
-
-        if ((safeX && safeZ) || !config.limit) {
+    if (!entity.isAlive() || !entity.isAttackable()) return;
+        try {
+            Random random = new Random();
+            Thread.sleep(random.nextInt(101) + 100);
             mc.interactionManager.attackEntity(mc.player, entity);
             mc.player.swingHand(Hand.MAIN_HAND);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
-
 }
