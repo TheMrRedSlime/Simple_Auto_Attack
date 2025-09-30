@@ -6,10 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.item.ItemStack;
-<<<<<<< HEAD
 // import net.minecraft.tag.ItemTags;
-=======
->>>>>>> 378f41d0a6769282ad868f85efabda5a47e624cd
 
 // import net.minecraft.registry.tag.ItemTags;
 import org.spongepowered.asm.mixin.Mixin;

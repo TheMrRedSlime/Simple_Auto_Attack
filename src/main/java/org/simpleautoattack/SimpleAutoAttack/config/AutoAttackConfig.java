@@ -18,11 +18,7 @@ public class AutoAttackConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip(count = 2)
     public boolean limit = false;
 
-<<<<<<< HEAD
     @ConfigEntry.Gui.Tooltip(count = 2)
     public int limitms = 500;
 
 } 
-=======
-} 
->>>>>>> 378f41d0a6769282ad868f85efabda5a47e624cd
