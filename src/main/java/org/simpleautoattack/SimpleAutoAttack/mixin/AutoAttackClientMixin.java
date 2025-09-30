@@ -6,9 +6,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tag.ItemTags;
+// import net.minecraft.tag.ItemTags;
 
-//import net.minecraft.registry.tag.ItemTags;
+// import net.minecraft.registry.tag.ItemTags;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,7 +37,7 @@ public abstract class AutoAttackClientMixin {
             String itemName = mainHandItem.getItem().toString().toLowerCase();
 
             // Use item tag for swords, string check for tridents
-            if (itemName.contains("sword") || itemName.contains("Sword") || itemName.contains("trident")) {
+            if (itemName.contains("sword") || itemName.contains("Sword") || itemName.contains("trident") || itemName.contains("mace")) {
                 interactionManager.cancelBlockBreaking();
                 info.cancel();
             }

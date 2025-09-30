@@ -15,4 +15,10 @@ public class AutoAttackConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip(count = 2)
     public boolean preventBlockBreaking = true;
 
+    @ConfigEntry.Gui.Tooltip(count = 2)
+    public boolean limit = false;
+
+    @ConfigEntry.Gui.Tooltip(count = 2)
+    public int limitms = 500;
+
 } 

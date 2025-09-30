@@ -10,5 +10,16 @@
   
   "text.autoconfig.simple_auto_attack.option.preventBlockBreaking": "Prevent Block Breaking",
   "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[0]": "Prevents breaking blocks when holding weapons",
-  "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[1]": "Works with swords, tridents, and maces"
+  "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[1]": "Works with swords, tridents, and maces",
+
+  "text.autoconfig.simple_auto_attack.option.limit": "Limit",
+  "text.autoconfig.simple_auto_attack.option.limit.@Tooltip[0]": "Make attacks look more human",
+  "text.autoconfig.simple_auto_attack.option.limit.@Tooltip[1]": "Using randomization",
+
+  "text.autoconfig.simple_auto_attack.option.limitms": "Cooldown (MS)",
+  "text.autoconfig.simple_auto_attack.option.limitms.@Tooltip[0]": "Cooldown for Limit",
+  "text.autoconfig.simple_auto_attack.option.limitms.@Tooltip[1]": "In Milliseconds",
+
+  "key.simpleautoattack.autoafk": "AutoAFK",
+  "category.simpleautoattack": "Red's Auto Attack"
 }
