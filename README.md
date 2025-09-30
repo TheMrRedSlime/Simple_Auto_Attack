@@ -1,6 +1,6 @@
 # Simple Auto Attack
 <h3 align="center">
-<a href="https://modrinth.com/mod/simple-auto-attack" target="_blank">Modrinth Homepage</a>
+<a href="https://modrinth.com/mod/autoattackmod" target="_blank">Modrinth Homepage</a>
 </h3>
 
 Simple Auto Attack makes holding the attack button auto attack entities you're aiming at.

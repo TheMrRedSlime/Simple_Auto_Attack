@@ -10,6 +10,7 @@
   
   "text.autoconfig.simple_auto_attack.option.preventBlockBreaking": "Prevent Block Breaking",
   "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[0]": "Prevents breaking blocks when holding weapons",
+<<<<<<< HEAD
   "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[1]": "Works with swords, tridents, and maces",
 
   "text.autoconfig.simple_auto_attack.option.limit": "Limit",
@@ -22,4 +23,14 @@
 
   "key.simpleautoattack.autoafk": "AutoAFK",
   "category.simpleautoattack": "Red's Auto Attack"
+=======
+  "text.autoconfig.simple_auto_attack.option.preventBlockBreaking.@Tooltip[1]": "Works with swords and tridents",
+
+  "text.autoconfig.simple_auto_attack.option.limit": "Limit",
+  "text.autoconfig.simple_auto_attack.option.limit.@Tooltip[0]": "Try and limit the attacks",
+  "text.autoconfig.simple_auto_attack.option.limit.@Tooltip[1]": "using randomization.",
+
+  "org.simpleautoattack.AFK_Key": "AFK Keybind",
+  "org.simpleautoattack.AttackKeys": "AutoAttack"
+>>>>>>> 378f41d0a6769282ad868f85efabda5a47e624cd
 }
