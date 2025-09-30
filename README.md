@@ -17,6 +17,7 @@ Makes the combat similar to the combat snapshots and adds some QOL features.
 - **Attack through grass**
 - **No attack resetting** doens't hit grass or blocks, which makes cave combat easier
 - **Prevent block breaking** (with swords, tridents and the mace), prevents attack resetting
+- **AFK Keybind** Used for mob grinders or farms when afking.
 
 Configureable with [ModMenu](https://modrinth.com/mod/modmenu)
   
