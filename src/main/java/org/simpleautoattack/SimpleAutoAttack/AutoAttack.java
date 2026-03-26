@@ -13,10 +13,12 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.option.KeyBinding.Category;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -27,6 +29,8 @@ import net.minecraft.util.math.Vec3d;
 public class AutoAttack implements ClientModInitializer {
     private static AutoAttackConfig config;
     public static KeyBinding afkKey;
+    public static final KeyBinding.Category SIMPLE_AUTO_ATTACK_CATEGORY = KeyBinding.Category.create(Identifier.of("simpleautoattack"));
+    
     public static boolean autoAfk = false;
     private long nextAttackTime = 0;
 
@@ -35,8 +39,7 @@ public class AutoAttack implements ClientModInitializer {
         // Register config
         AutoConfig.register(AutoAttackConfig.class, GsonConfigSerializer::new);
         config = AutoConfig.getConfigHolder(AutoAttackConfig.class).getConfig();
-        afkKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.simpleautoattack.autoafk", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_K , "category.simpleautoattack"));
-        
+        afkKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.simpleautoattack.autoafk", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_K , SIMPLE_AUTO_ATTACK_CATEGORY));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (config.enabled) { 
                 if(afkKey.wasPressed()){
@@ -53,7 +56,7 @@ public class AutoAttack implements ClientModInitializer {
     }
 
     private void AutoMeleeTick(MinecraftClient mc) {
-        if ((!autoAfk && !mc.options.keyAttack.isPressed()) || mc.player == null || mc.world == null || mc.interactionManager == null
+        if ((!autoAfk && !mc.options.attackKey.isPressed()) || mc.player == null || mc.world == null || mc.interactionManager == null
                 || !(mc.player.getAttackCooldownProgress(0) >= 1)) {
             return;
         }
